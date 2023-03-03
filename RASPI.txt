@@ -1,3 +1,5 @@
+INSTALL RASPBERRY PI OS LEGACY WITH DESKTOP ENVIRONMENT FROM THE PI IMAGER AND CONFIGURE SSH IN CASE YOU DONT HAVE DISPLAY 
+
 #SSH CONECTION
 
 ssh linuxcnc@192.168.1.77
@@ -41,7 +43,7 @@ cd ..
 
 dpkg-checkbuilddeps
 
-#Build LinuxCNC
+#BUILD LINUXCNC
 cd
 cd linuxcnc-dev/src
 ./autogen.sh
