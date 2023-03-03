@@ -1,0 +1,56 @@
+#SSH CONECTION
+
+ssh linuxcnc@192.168.1.77
+
+################################################################# BUILDING REALTIME KERNEL #####################################################
+
+sudo apt-get update
+sudo apt-get install git bc mc libncurses5-dev
+git clone --depth=1 https://github.com/raspberrypi/linux -b rpi-4.14.y-rt
+
+cd linux
+KERNEL=kernel7
+make bcm2709_defconfig
+make menuconfig
+
+Kernel features | Preemption Model | FULLY PREEMPTABLE KERNEL #RT
+exit
+exit
+
+
+make -j3 zImage modules dtbs 
+
+sudo make modules_install
+sudo cp arch/arm/boot/dts/*.dtb /boot/
+sudo cp arch/arm/boot/dts/overlays/*.dtb* /boot/overlays/
+sudo cp arch/arm/boot/dts/overlays/README /boot/overlays/
+sudo cp arch/arm/boot/zImage /boot/$KERNEL.img
+
+####################################################################### BUILDING LINUXCNC ######################################################
+
+cd
+git clone git://github.com/linuxcnc/linuxcnc.git linuxcnc-dev
+sudo apt-get install dpkg-dev
+cd linuxcnc-dev
+git fetch origin 2.8
+git checkout 2.8
+cd debian
+
+./configure uspace
+cd ..
+
+dpkg-checkbuilddeps
+
+#Build LinuxCNC
+cd
+cd linuxcnc-dev/src
+./autogen.sh
+./configure --with-realtime=uspace
+make
+
+sudo make setuid
+
+cd
+cd linuxcnc-dev/
+. scripts/rip-environment
+linuxcnc
